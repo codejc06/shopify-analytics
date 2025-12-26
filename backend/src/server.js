@@ -11,6 +11,8 @@ import passportConfig from "../config/passport.js";
 import dashboardRoutes from "../routes/dashboardRoutes.js";
 import authRoutes from "../routes/authRoutes.js";
 import shopifyRoutes from "../routes/shopifyRoutes.js";
+import aiRoutes from "../routes/aiRoutes.js";
+import { validateConfig, printConfig } from "../ai/config.js";
 
 dotenv.config();
 
@@ -81,6 +83,9 @@ app.use("/auth", shopifyRoutes);
 // Dashboard Routes (protected)
 app.use("/dashboard", dashboardRoutes);
 
+// AI Routes (protected)
+app.use("/api/ai", aiRoutes);
+
 // Connect to MongoDB
 async function start() {
   try {
@@ -89,6 +94,13 @@ async function start() {
     });
 
     console.log("MongoDB connected");
+
+    // Validate and print AI configuration
+    if (validateConfig()) {
+      printConfig();
+    } else {
+      console.warn("⚠️  AI system has configuration errors. AI features may not work correctly.");
+    }
 
     const PORT = process.env.PORT || 5001;
     app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

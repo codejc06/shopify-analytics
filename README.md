@@ -339,5 +339,353 @@ SESSION_SECRET=strong_random_secret
 - `GET /auth/shopify` - Shopify OAuth
 - `GET /auth/shopify/callback` - Shopify OAuth callback
 
+---
+
+# 🤖 AI Insights System
+
+## Overview
+
+An enterprise-grade AI layer that transforms your deterministic analytics into business-friendly insights and recommendations.
+
+**Key Principle:** AI augments your analytics, never replaces them. Your deterministic engine remains the source of truth.
+
+## Quick Start
+
+### 1. Verify Setup
+```bash
+npm run ai:setup
+```
+
+### 2. Test System (Mock Mode - No Costs)
+```bash
+npm run ai:test
+```
+
+### 3. Start Server
+```bash
+npm run dev
+```
+
+## Current Status: MOCK MODE
+
+The AI system is **fully installed and working** in mock mode:
+- ✅ All API endpoints functional
+- ✅ Full pipeline working
+- ✅ Zero costs (mock responses)
+- ✅ Perfect for testing
+
+**API Key in .env:**
+```env
+# FAKE API KEY - Replace with your actual OpenAI API key
+# Get your key at: https://platform.openai.com/api-keys
+OPENAI_API_KEY=sk-fake-key-replace-with-your-actual-openai-api-key-1234567890
+```
+
+## Architecture
+
+### Two-Layer AI Design
+```
+Generator LLM → Creates insights from analytics
+      ↓
+Evaluator LLM → Scores quality (0-10), detects hallucination
+      ↓
+Decision: Pass (≥8) | Retry (6-7.9) | Fallback (<6)
+```
+
+### Data Flow
+```
+Your Analytics → AI Context (~1500 tokens) → Generator → Evaluator → Database
+```
+
+### Files Structure
+```
+backend/ai/
+├── orchestrator.js      - Main coordinator
+├── generator.js         - Creates insights
+├── evaluator.js         - Quality judge
+├── contextBuilder.js    - Data transformer
+├── config.js            - Cost & quality control
+├── types.js             - Type definitions
+├── setup.js             - Verification script
+├── test.js              - Test suite
+└── .env.example         - Config template
+
+backend/models/AIReport.js  - Database model
+backend/routes/aiRoutes.js  - 8 API endpoints
+```
+
+## AI API Endpoints
+
+```bash
+# Get AI report (cached if fresh)
+GET /api/ai/report/:storeId/:year/:month
+
+# Force regenerate
+POST /api/ai/regenerate/:storeId/:year/:month
+
+# Get all reports for store
+GET /api/ai/reports/:storeId
+
+# Quality statistics
+GET /api/ai/stats/:storeId
+
+# Cost estimate
+GET /api/ai/estimate/:storeId/:year/:month
+
+# User feedback
+POST /api/ai/feedback/:reportId
+
+# Batch generate (up to 12)
+POST /api/ai/batch-generate/:storeId
+```
+
+## Configuration
+
+All AI settings in `.env`:
+
+```env
+# Feature Flags
+AI_ENABLED=true
+AI_AUTO_GENERATE=false       # Manual generation only
+AI_BATCH_ENABLED=false       # Disable batch endpoints
+AI_USE_FALLBACK=true         # Always fallback on error
+
+# Models
+AI_GENERATOR_MODEL=gpt-4o
+AI_EVALUATOR_MODEL=gpt-4o-mini
+AI_GENERATOR_TEMPERATURE=0.3
+
+# Cost Control
+AI_MAX_COST_PER_REPORT=0.10
+AI_MAX_MONTHLY_COST=100
+AI_MAX_RETRIES=1
+AI_MAX_REPORTS_PER_HOUR=60
+
+# Quality
+AI_PASS_SCORE=8.0           # Minimum to accept
+AI_RETRY_SCORE=6.0          # Minimum to retry
+AI_CACHE_MAX_AGE_DAYS=30
+```
+
+## Safety Features
+
+### Cost Protection
+- Per-report limit: $0.10
+- Monthly budget: $100
+- Rate limiting: 60/hour
+- Max retries: 1
+- Auto-alerts at 80% budget
+
+### Quality Assurance
+- LLM Judge scores every output (0-10)
+- Pass threshold: 8.0/10
+- Auto-retry if score 6.0-7.9
+- Fallback to deterministic if < 6.0
+- Rule-based validation
+
+### Never Fails
+- Deterministic fallback always available
+- Uses your existing analytics
+- Zero hallucination risk
+- Graceful degradation
+
+## Enabling Real AI (When Ready)
+
+### Step 1: Get API Key
+Visit: https://platform.openai.com/api-keys
+
+### Step 2: Update .env
+Replace fake key with real key
+
+### Step 3: Enable API Calls
+
+**File 1: `backend/ai/generator.js` (line ~165)**
+```javascript
+// Uncomment this block:
+const OpenAI = require('openai');
+const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+
+const response = await openai.chat.completions.create({
+  model: config.model,
+  messages: [
+    { role: "system", content: systemPrompt },
+    { role: "user", content: userPrompt }
+  ],
+  temperature: config.temperature,
+  max_tokens: config.maxTokens,
+  response_format: { type: "json_object" }
+});
+
+return response.choices[0].message.content;
+```
+
+**File 2: `backend/ai/evaluator.js` (line ~145)**
+Same pattern - uncomment real API call
+
+### Step 4: Test
+```bash
+npm run ai:test  # Now makes real API calls
+```
+
+## Cost Estimates (When Live)
+
+| Volume | Monthly Cost |
+|--------|--------------|
+| 50 reports | $1 - $2.50 |
+| 100 reports | $2 - $5 |
+| 500 reports | $10 - $25 |
+| 1000 reports | $20 - $50 |
+
+**Per report:** ~$0.02 - $0.03 (GPT-4o)
+
+## Example Output
+
+### AI Request
+```bash
+GET /api/ai/report/507f1f77bcf86cd799439011/2024/3
+```
+
+### AI Response
+```json
+{
+  "report": {
+    "summary": "March 2024 showed strong performance with revenue increasing 15.3% month-over-month. The primary driver was improved AOV (+18%), though returning customer rates declined slightly. Store should focus on retention while capitalizing on increased spending patterns.",
+    "insights": [
+      {
+        "title": "Revenue Growth Driven by Higher AOV",
+        "explanation": "While order volume remained stable, the 18% increase in average order value directly contributed to revenue growth.",
+        "severity": "high",
+        "relatedMetrics": ["Revenue", "AOV"]
+      }
+    ],
+    "actions": [
+      {
+        "action": "Implement abandoned cart email sequence",
+        "reason": "Based on $6,200 in abandoned carts with 20% recovery rate",
+        "impact": "$1,240 estimated recovery",
+        "effort": "low",
+        "timeframe": "immediate"
+      }
+    ]
+  },
+  "evaluation": {
+    "score": 8.7,
+    "pass": true,
+    "breakdown": {
+      "accuracy": 9,
+      "specificity": 8,
+      "actionability": 9,
+      "businessValue": 9
+    }
+  }
+}
+```
+
+## Usage Patterns
+
+### Pattern 1: On-Demand (Recommended)
+```javascript
+// Frontend button click
+const response = await fetch(`/api/ai/report/${storeId}/${year}/${month}`);
+```
+
+### Pattern 2: Auto-Generate
+```javascript
+// After monthly report completes
+import { generateAIReport } from "./ai/orchestrator.js";
+
+if (AI_FEATURES.autoGenerate) {
+  await generateAIReport(storeId, month, year);
+}
+```
+
+### Pattern 3: Batch Backfill
+```javascript
+// Weekly cron job
+import { batchGenerateReports } from "./ai/orchestrator.js";
+
+await batchGenerateReports(storeId, [
+  {month: 1, year: 2024},
+  {month: 2, year: 2024}
+]);
+```
+
+## Monitoring
+
+### Check Stats
+```javascript
+const stats = await AIReport.getQualityStats(storeId);
+// { averageScore: "8.5", passRate: "87%", fallbackRate: "13%" }
+```
+
+### Check Costs
+```javascript
+import { rateLimiter } from "./ai/config.js";
+const stats = rateLimiter.getStats();
+// { costThisMonth: 23.45, budgetRemaining: 76.55 }
+```
+
+## Troubleshooting
+
+### "AI reports always use fallback"
+- Check OPENAI_API_KEY is set
+- Verify real API calls uncommented in generator.js and evaluator.js
+- Check AI_ENABLED=true
+
+### "Costs too high"
+- Lower AI_MAX_RETRIES=0
+- Use smaller model: AI_GENERATOR_MODEL=gpt-4o-mini
+- Reduce AI_GENERATOR_MAX_TOKENS=800
+- Disable auto-generation: AI_AUTO_GENERATE=false
+
+### "Quality scores low"
+- Lower threshold: AI_PASS_SCORE=7.0
+- Review prompts in generator.js
+- Check input data quality
+
+### "Rate limit exceeded"
+```javascript
+import { rateLimiter } from "./ai/config.js";
+console.log(rateLimiter.getStats());
+```
+
+## Best Practices
+
+### DO ✅
+- Test in mock mode first
+- Use for monthly/weekly insights
+- Cache aggressively
+- Monitor costs closely
+- Collect user feedback
+- Start with manual generation
+
+### DON'T ❌
+- Enable auto-generation immediately
+- Generate on every page load
+- Trust AI numbers over your analytics
+- Skip the evaluator
+- Disable fallback protection
+- Ignore cost alerts
+
+## Future Enhancements
+
+Already architected for:
+- ✅ Model swapping (OpenAI → Anthropic)
+- ✅ Fine-tuning with feedback
+- ✅ Industry-specific prompts
+- ✅ Multi-month context
+- ✅ A/B testing prompts
+- ✅ Report versioning
+
+## NPM Scripts
+
+```bash
+npm run ai:setup    # Verify AI system setup
+npm run ai:test     # Test AI system (mock mode)
+npm run dev         # Start server with AI routes
+```
+
+---
+
 
 
