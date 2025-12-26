@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <nav class="navbar">
+    <div class="container">
+      <div class="nav-brand">
+        <h1>Shopify Analytics</h1>
+      </div>
+      <ul class="nav-menu">
+        <li><a href="/dashboard" class="nav-link">Dashboard</a></li>
+        <li><a href="/dashboard/ads" class="nav-link">Ads</a></li>
+        <li><a href="/dashboard/add" class="nav-link btn-primary">+ Add Store</a></li>
+        <li><span class="nav-user"> <%= user.name %></span></li>
+        <li><a href="/auth/logout" class="nav-link">Logout</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <main class="main-content">
+    <div class="container">
+      <div class="breadcrumb">
+        <a href="/dashboard">Dashboard</a> / <span><%= store.storeName %></span>
+      </div>
+
+      <div class="page-header">
+        <div>
+          <h2><%= store.storeName %></h2>
+          <p class="subtitle"><%= store.shopifyDomain %></p>
+          <p class="store-owner-info">Owner: <%= store.user.name %> (<%= store.user.email %>)</p>
+        </div>
+        <div style="display: flex; align-items: center; gap: 1rem;">
+          <% if (report) { %>
+            <form method="GET" action="/dashboard/<%= store._id %>" style="margin: 0;">
+              <select name="month" onchange="this.form.submit()" style="padding: 0.5rem 1rem; border: 1px solid #e1e3e5; border-radius: 6px; font-size: 0.9rem; font-family: 'Inter', sans-serif; background: white; cursor: pointer;">
+                <option value="1" <%= report.month === 1 ? 'selected' : '' %>>January 2024</option>
+                <option value="2" <%= report.month === 2 ? 'selected' : '' %>>February 2024</option>
+                <option value="3" <%= report.month === 3 ? 'selected' : '' %>>March 2024</option>
+                <option value="4" <%= report.month === 4 ? 'selected' : '' %>>April 2024</option>
+                <option value="5" <%= report.month === 5 ? 'selected' : '' %>>May 2024</option>
+                <option value="6" <%= report.month === 6 ? 'selected' : '' %>>June 2024</option>
+                <option value="7" <%= report.month === 7 ? 'selected' : '' %>>July 2024</option>
+                <option value="8" <%= report.month === 8 ? 'selected' : '' %>>August 2024</option>
+                <option value="9" <%= report.month === 9 ? 'selected' : '' %>>September 2024</option>
+                <option value="10" <%= report.month === 10 ? 'selected' : '' %>>October 2024</option>
+              </select>
+            </form>
+          <% } %>
+          <span class="badge badge-success">Active</span>
+        </div>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card highlight">
+          
+          <div class="stat-info">
+            <h3>$<%= parseFloat(totalRevenue).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) %></h3>
+            <p>Total Revenue</p>
+          </div>
+        </div>
+        <div class="stat-card highlight">
+          
+          <div class="stat-info">
+            <h3><%= totalOrders %></h3>
+            <p>Total Orders</p>
+          </div>
+        </div>
+        <div class="stat-card highlight">
+          
+          <div class="stat-info">
+            <h3>$<%= parseFloat(avgOrderValue).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) %></h3>
+            <p>Avg Order Value</p>
+          </div>
+        </div>
+        <div class="stat-card highlight">
+          
+          <div class="stat-info">
+            <h3><%= report ? (report.data.returningCustomerRate * 100).toFixed(0) : 0 %>%</h3>
+            <p>Returning Customers</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Smart Alerts Section -->
+      <% if (report && report.alerts && report.alerts.length > 0) { %>
+        <div class="analytics-section alerts-section">
+          <div class="section-header-action">
+            <h3>Smart Alerts</h3>
+            <p class="section-subtitle">What needs your attention this month</p>
+          </div>
+          <div class="alerts-feed">
+            <% report.alerts.forEach((alert, index) => { %>
+              <div class="alert-item alert-<%= alert.type %> severity-<%= alert.severity %>" data-alert-id="<%= index %>">
+                <div class="alert-content">
+                  <div class="alert-header">
+                    <span class="alert-metric"><%= alert.metric %></span>
+                    <% if (alert.changePercent !== null && alert.changePercent !== undefined) { %>
+                      <span class="alert-change <%= alert.change > 0 ? 'positive' : 'negative' %>">
+                        <%= alert.change > 0 ? '+' : '' %><%= alert.changePercent.toFixed(1) %>%
+                      </span>
+                    <% } else if (alert.change !== null && alert.change !== undefined) { %>
+                      <span class="alert-change <%= alert.change > 0 ? 'positive' : 'negative' %>">
+                        <%= alert.change > 0 ? '+' : '' %><%= alert.change.toFixed(1) %>
+                      </span>
+                    <% } %>
+                  </div>
+                  <p class="alert-message"><%= alert.message %></p>
+                  <% if (alert.actionable && alert.link) { %>
+                    <a href="<%= alert.link %>" class="alert-action">View Details →</a>
+                  <% } %>
+                </div>
+                <% if (alert.severity === 'high') { %>
+                  <span class="severity-badge high">High Priority</span>
+                <% } else if (alert.severity === 'medium') { %>
+                  <span class="severity-badge medium">Action Needed</span>
+                <% } %>
+              </div>
+            <% }) %>
+          </div>
+        </div>
+      <% } %>
+
+      <!-- Root Cause Analysis Section -->
+      <% if (report) { %>
+        <% if (report.rootCauses && report.rootCauses.length > 0) { %>
+          <div class="analytics-section root-cause-section">
+            <div class="section-header-action">
+              <h3>Why Did This Change?</h3>
+              <p class="section-subtitle">Month-over-month analysis - plain English, no guessing</p>
+            </div>
+            <div class="root-causes-list">
+              <% report.rootCauses.forEach((cause, index) => { %>
+                <div class="root-cause-item impact-<%= cause.impact.toLowerCase() %> direction-<%= cause.direction %>">
+                  <div class="root-cause-header">
+                    <div class="root-cause-metric">
+                      <% if (cause.direction === 'down') { %>
+                        
+                      <% } else { %>
+                        
+                      <% } %>
+                      <span class="metric-name"><%= cause.metric %></span>
+                    </div>
+                    <div class="root-cause-badges">
+                      <span class="impact-badge impact-<%= cause.impact.toLowerCase() %>"><%= cause.impact %> Impact</span>
+                      <span class="change-badge <%= cause.direction %>">
+                        <%= cause.direction === 'down' ? '↓' : '↑' %> <%= Math.abs(cause.changePercent).toFixed(1) %>%
+                      </span>
+                    </div>
+                  </div>
+                  <p class="root-cause-explanation"><%= cause.explanation %></p>
+                </div>
+              <% }) %>
+            </div>
+          </div>
+        <% } else { %>
+          <!-- Show "First Month" message if no root causes yet -->
+          <div class="analytics-section root-cause-placeholder">
+            <div class="section-header-action">
+              <h3>Why Did This Change?</h3>
+              <p class="section-subtitle">Root-cause analysis will appear starting from the second month</p>
+            </div>
+            <div class="placeholder-message">
+              
+              <h4>This is your baseline month</h4>
+              <p>Root-cause analysis compares month-over-month changes. Once you have data for multiple months, you'll see detailed explanations of what changed and why.</p>
+            </div>
+          </div>
+        <% } %>
+      <% } %>
+
+      <% if (report && report.data.recommendations && report.data.recommendations.length > 0) { %>
+      <div class="analytics-section">
+        <div class="section-header-action">
+          <h3> Action Items - Grow Your Revenue</h3>
+          <p class="section-subtitle">Smart recommendations based on your data</p>
+        </div>
+        <div class="recommendations-grid">
+          <% report.data.recommendations.forEach((rec, index) => { %>
+            <div class="recommendation-card recommendation-<%= rec.type %> <%= rec.priority === 1 ? 'priority-high' : '' %>">
+              <div class="recommendation-header">
+                <div class="recommendation-badge-container">
+                  <% if (rec.type === 'opportunity') { %>
+                    
+                  <% } else if (rec.type === 'warning') { %>
+                    
+                  <% } else { %>
+                    
+                  <% } %>
+                  <% if (rec.priority === 1) { %>
+                    <span class="priority-badge">High Priority</span>
+                  <% } %>
+                </div>
+                <div class="recommendation-impact"><%= rec.impact %></div>
+              </div>
+              <h4 class="recommendation-title"><%= rec.title %></h4>
+              <p class="recommendation-description"><%= rec.description %></p>
+              <div class="recommendation-action">
+                <a href="<%= rec.actionUrl %>" class="btn-action <%= rec.type === 'opportunity' ? 'btn-action-primary' : rec.type === 'warning' ? 'btn-action-warning' : 'btn-action-secondary' %>">
+                  <%= rec.actionText %> →
+                </a>
+              </div>
+            </div>
+          <% }) %>
+        </div>
+      </div>
+      <% } %>
+
+      <% if (report) { %>
+      <div class="analytics-section">
+        <h3>Monthly Report Insights</h3>
+        <div class="report-cards-grid">
+          <div class="report-card">
+            <div class="report-header">
+              <h4>Top Product</h4>
+              <span class="badge badge-primary">Best Seller</span>
+            </div>
+            <p class="report-value-large"><%= report.data.topProduct?.name || report.data.topProduct %></p>
+            <% if (report.data.topProduct?.unitsSold) { %>
+              <div class="report-meta">
+                <span><strong><%= report.data.topProduct.unitsSold %></strong> units sold</span>
+                <span class="report-revenue">$<%= parseFloat(report.data.topProduct.revenue).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) %></span>
+              </div>
+            <% } %>
+          </div>
+
+          <div class="report-card">
+            <h4>Growth vs Last Month</h4>
+            <p class="report-value-large <%= report.data.growth > 0 ? 'positive' : 'negative' %>">
+              <%= report.data.growth > 0 ? '+' : '' %><%= (report.data.growth * 100).toFixed(1) %>%
+            </p>
+            <% if (report.data.previousMonthRevenue) { %>
+              <div class="report-meta">
+                <span>Previous: $<%= parseFloat(report.data.previousMonthRevenue).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) %></span>
+                <span>Current: $<%= parseFloat(report.data.revenue).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) %></span>
+              </div>
+            <% } %>
+          </div>
+
+          <% if (report.data.totalUnitsSold) { %>
+          <div class="report-card">
+            <h4>Total Units Sold</h4>
+            <p class="report-value-large"><%= report.data.totalUnitsSold.toLocaleString('en-US') %></p>
+            <div class="report-meta">
+              <span>Across <%= totalOrders %> orders</span>
+            </div>
+          </div>
+          <% } %>
+
+          <% if (report.data.conversionRate) { %>
+          <div class="report-card">
+            <h4>Conversion Rate</h4>
+            <p class="report-value-large"><%= (report.data.conversionRate * 100).toFixed(2) %>%</p>
+            <div class="report-meta">
+              <span>Visitors to customers</span>
+            </div>
+          </div>
+          <% } %>
+
+          <% if (report.data.avgShippingTime) { %>
+          <div class="report-card">
+            <h4>Avg Shipping Time</h4>
+            <p class="report-value-large"><%= report.data.avgShippingTime %> days</p>
+            <div class="report-meta">
+              <span class="<%= report.data.avgShippingTime <= 3 ? 'positive' : '' %>">
+                <%= report.data.avgShippingTime <= 3 ? ' Fast delivery' : 'Standard delivery' %>
+              </span>
+            </div>
+          </div>
+          <% } %>
+
+          <% if (report.data.topCategories && report.data.topCategories.length > 0) { %>
+          <div class="report-card report-card-wide">
+            <h4>Top Categories by Revenue</h4>
+            <div class="category-breakdown">
+              <% report.data.topCategories.forEach(cat => { %>
+                <div class="category-item">
+                  <div class="category-info">
+                    <span class="category-name"><%= cat.name %></span>
+                    <span class="category-revenue">$<%= parseFloat(cat.revenue).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) %></span>
+                  </div>
+                  <div class="category-bar-container">
+                    <div class="category-bar" style="width: <%= cat.percentage %>%"></div>
+                    <span class="category-percentage"><%= cat.percentage %>%</span>
+                  </div>
+                </div>
+              <% }) %>
+            </div>
+          </div>
+          <% } %>
+        </div>
+      </div>
+      <% } %>
+
+      <div class="analytics-section">
+        <div class="chart-header">
+          <h3>Revenue by Month</h3>
+          <div class="chart-toggle">
+            <button class="chart-toggle-btn active" data-chart="line">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                <path d="M2 15L7 10L11 14L18 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <circle cx="2" cy="15" r="2" fill="currentColor"/>
+                <circle cx="7" cy="10" r="2" fill="currentColor"/>
+                <circle cx="11" cy="14" r="2" fill="currentColor"/>
+                <circle cx="18" cy="7" r="2" fill="currentColor"/>
+              </svg>
+              Line
+            </button>
+            <button class="chart-toggle-btn" data-chart="bar">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                <rect x="2" y="10" width="3" height="8" fill="currentColor"/>
+                <rect x="7" y="6" width="3" height="12" fill="currentColor"/>
+                <rect x="12" y="8" width="3" height="10" fill="currentColor"/>
+                <rect x="17" y="4" width="3" height="14" fill="currentColor"/>
+              </svg>
+              Bar
+            </button>
+          </div>
+        </div>
+        <div class="chart-container">
+          <canvas id="revenueChart" width="800" height="300"></canvas>
+          <div class="bar-chart" id="barChartContainer" style="display: none;">
+            <%
+              // Generate all 24 months
+              const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+              const currentDate = new Date();
+              const allMonths = [];
+
+              for (let i = 23; i >= 0; i--) {
+                const date = new Date();
+                date.setMonth(currentDate.getMonth() - i);
+                const monthKey = `${monthNames[date.getMonth()]} ${date.getFullYear()}`;
+                allMonths.push(monthKey);
+              }
+
+              const revenues = allMonths.map(m => ordersByMonth[m] ? ordersByMonth[m].revenue : 0);
+              const maxRevenue = revenues.length > 0 ? Math.max(...revenues) : 1;
+
+              allMonths.forEach((month, index) => {
+                const data = ordersByMonth[month] || { revenue: 0, count: 0 };
+                const heightPercent = ((data.revenue / maxRevenue) * 100).toFixed(1);
+                const animationDelay = (index * 0.03).toFixed(2);
+            %>
+              <div class="bar-item">
+                <div class="bar-wrapper">
+                  <div class="bar" style="height: <%= heightPercent %>%; animation-delay: <%= animationDelay %>s;">
+                    <% if (data.revenue > 0) { %>
+                      <span class="bar-label">$<%= Math.round(data.revenue).toLocaleString('en-US') %></span>
+                    <% } %>
+                  </div>
+                </div>
+                <div class="bar-month"><%= month.split(' ')[0] %></div>
+                <div class="bar-orders"><%= data.count %> ord</div>
+              </div>
+            <% }); %>
+          </div>
+        </div>
+      </div>
+
+      <div class="analytics-section">
+        <h3>Recent Orders (Latest 20)</h3>
+        <div class="table-container">
+          <table class="orders-table">
+            <thead>
+              <tr>
+                <th>Order ID</th>
+                <th>Customer ID</th>
+                <th>Items</th>
+                <th>Total Price</th>
+                <th>Date</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% if (orders.length === 0) { %>
+                <tr>
+                  <td colspan="5" class="empty-table">No orders found</td>
+                </tr>
+              <% } else { %>
+                <% orders.forEach(order => { %>
+                  <tr>
+                    <td class="order-id"><%= order.orderId %></td>
+                    <td><%= order.customerId %></td>
+                    <td><%= order.lineItems %></td>
+                    <td class="order-price">$<%= parseFloat(order.totalPrice).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) %></td>
+                    <td><%= new Date(order.createdAt).toLocaleDateString() %></td>
+                  </tr>
+                <% }) %>
+              <% } %>
+            </tbody>
+          </table>
+        </div>
+        <% if (totalOrders > 20) { %>
+          <p class="table-note">Showing 20 of <%= totalOrders %> orders</p>
+        <% } %>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <p>&copy; 2024 Shopify Analytics SaaS. Built with Express & MongoDB.</p>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script src="/js/main.js"></script>
+  <script>
+    // Prepare data from server
+    const ordersByMonth = <%- JSON.stringify(ordersByMonth) %>;
+
+    // Convert to arrays for Chart.js
+    const labels = [];
+    const revenueData = [];
+    const orderCounts = [];
+
+    // Get all months for the past 24 months
+    const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const currentDate = new Date();
+
+    for (let i = 23; i >= 0; i--) {
+      const date = new Date();
+      date.setMonth(currentDate.getMonth() - i);
+      const monthKey = `${monthNames[date.getMonth()]} ${date.getFullYear()}`;
+
+      labels.push(monthKey);
+
+      if (ordersByMonth[monthKey]) {
+        revenueData.push(ordersByMonth[monthKey].revenue);
+        orderCounts.push(ordersByMonth[monthKey].count);
+      } else {
+        revenueData.push(0);
+        orderCounts.push(0);
+      }
+    }
+
+    // Initialize Line Chart
+    const ctx = document.getElementById('revenueChart').getContext('2d');
+    const revenueChart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: labels,
+        datasets: [{
+          label: 'Revenue ($)',
+          data: revenueData,
+          borderColor: '#008060',
+          backgroundColor: 'rgba(0, 128, 96, 0.1)',
+          borderWidth: 3,
+          fill: true,
+          tension: 0.4,
+          pointRadius: 4,
+          pointHoverRadius: 6,
+          pointBackgroundColor: '#008060',
+          pointBorderColor: '#fff',
+          pointBorderWidth: 2
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            display: false
+          },
+          tooltip: {
+            mode: 'index',
+            intersect: false,
+            backgroundColor: '#2d2d2d',
+            titleColor: '#ffffff',
+            bodyColor: '#b5b5b5',
+            borderColor: '#3d3d3d',
+            borderWidth: 1,
+            padding: 12,
+            displayColors: false,
+            callbacks: {
+              label: function(context) {
+                return '$' + context.parsed.y.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) +
+                       ' (' + orderCounts[context.dataIndex] + ' orders)';
+              }
+            }
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            ticks: {
+              color: '#b5b5b5',
+              callback: function(value) {
+                return '$' + value.toLocaleString('en-US');
+              }
+            },
+            grid: {
+              color: '#3d3d3d',
+              drawBorder: false
+            }
+          },
+          x: {
+            ticks: {
+              color: '#b5b5b5',
+              maxRotation: 45,
+              minRotation: 45
+            },
+            grid: {
+              color: '#3d3d3d',
+              drawBorder: false
+            }
+          }
+        },
+        interaction: {
+          mode: 'nearest',
+          axis: 'x',
+          intersect: false
+        }
+      }
+    });
+
+    // Chart toggle functionality
+    const chartToggleBtns = document.querySelectorAll('.chart-toggle-btn');
+    const lineChartCanvas = document.getElementById('revenueChart');
+    const barChartContainer = document.getElementById('barChartContainer');
+
+    chartToggleBtns.forEach(btn => {
+      btn.addEventListener('click', function() {
+        const chartType = this.dataset.chart;
+
+        // Update active state
+        chartToggleBtns.forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+
+        // Toggle chart visibility
+        if (chartType === 'line') {
+          lineChartCanvas.style.display = 'block';
+          barChartContainer.style.display = 'none';
+        } else {
+          lineChartCanvas.style.display = 'none';
+          barChartContainer.style.display = 'flex';
+        }
+      });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <nav class="navbar">
+    <div class="container">
+      <div class="nav-brand">
+        <h1>Shopify Analytics</h1>
+      </div>
+      <ul class="nav-menu">
+        <li><a href="/dashboard" class="nav-link">Dashboard</a></li>
+        <li><a href="/dashboard/ads" class="nav-link active">Ads</a></li>
+        <li><a href="/dashboard/add" class="nav-link btn-primary">+ Add Store</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <main class="main-content">
+    <div class="container">
+      <div class="page-header">
+        <h1>Ad Campaign Manager</h1>
+        <p class="subtitle">Manage and track your advertising campaigns across all stores</p>
+      </div>
+
+      <!-- Campaign Overview Stats -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          
+          <div class="stat-info">
+            <h3>$12,450.00</h3>
+            <p>Total Ad Spend</p>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          
+          <div class="stat-info">
+            <h3>$48,200.00</h3>
+            <p>Revenue from Ads</p>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          
+          <div class="stat-info">
+            <h3>3.87x</h3>
+            <p>ROAS</p>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          
+          <div class="stat-info">
+            <h3>2.4%</h3>
+            <p>Click-Through Rate</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Create New Campaign Button -->
+      <div class="section-header">
+        <h2>Active Campaigns</h2>
+        <button class="btn-primary" onclick="showCreateCampaignModal()">+ Create Campaign</button>
+      </div>
+
+      <!-- Active Campaigns List -->
+      <div class="campaigns-grid">
+        <!-- Campaign Card 1 -->
+        <div class="campaign-card">
+          <div class="campaign-header">
+            <div>
+              <h3>Black Friday Sale 2024</h3>
+              <span class="campaign-status status-active">Active</span>
+            </div>
+            <div class="campaign-actions">
+              <button class="btn-icon" title="Edit"></button>
+              <button class="btn-icon" title="Pause">⏸</button>
+            </div>
+          </div>
+
+          <div class="campaign-details">
+            <div class="detail-row">
+              <span class="label">Platform:</span>
+              <span class="value">Facebook & Instagram</span>
+            </div>
+            <div class="detail-row">
+              <span class="label">Duration:</span>
+              <span class="value">Nov 15 - Dec 1, 2024</span>
+            </div>
+            <div class="detail-row">
+              <span class="label">Daily Budget:</span>
+              <span class="value">$150.00</span>
+            </div>
+          </div>
+
+          <div class="campaign-metrics">
+            <div class="metric">
+              <span class="metric-label">Spend</span>
+              <span class="metric-value">$2,850.00</span>
+            </div>
+            <div class="metric">
+              <span class="metric-label">Revenue</span>
+              <span class="metric-value">$11,400.00</span>
+            </div>
+            <div class="metric">
+              <span class="metric-label">ROAS</span>
+              <span class="metric-value metric-success">4.0x</span>
+            </div>
+            <div class="metric">
+              <span class="metric-label">Conversions</span>
+              <span class="metric-value">142</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Campaign Card 2 -->
+        <div class="campaign-card">
+          <div class="campaign-header">
+            <div>
+              <h3>Holiday Collection Launch</h3>
+              <span class="campaign-status status-active">Active</span>
+            </div>
+            <div class="campaign-actions">
+              <button class="btn-icon" title="Edit"></button>
+              <button class="btn-icon" title="Pause">⏸</button>
+            </div>
+          </div>
+
+          <div class="campaign-details">
+            <div class="detail-row">
+              <span class="label">Platform:</span>
+              <span class="value">Google Ads</span>
+            </div>
+            <div class="detail-row">
+              <span class="label">Duration:</span>
+              <span class="value">Dec 1 - Dec 25, 2024</span>
+            </div>
+            <div class="detail-row">
+              <span class="label">Daily Budget:</span>
+              <span class="value">$200.00</span>
+            </div>
+          </div>
+
+          <div class="campaign-metrics">
+            <div class="metric">
+              <span class="metric-label">Spend</span>
+              <span class="metric-value">$4,200.00</span>
+            </div>
+            <div class="metric">
+              <span class="metric-label">Revenue</span>
+              <span class="metric-value">$16,800.00</span>
+            </div>
+            <div class="metric">
+              <span class="metric-label">ROAS</span>
+              <span class="metric-value metric-success">4.0x</span>
+            </div>
+            <div class="metric">
+              <span class="metric-label">Conversions</span>
+              <span class="metric-value">201</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Campaign Card 3 -->
+        <div class="campaign-card">
+          <div class="campaign-header">
+            <div>
+              <h3>Retargeting - Abandoned Carts</h3>
+              <span class="campaign-status status-active">Active</span>
+            </div>
+            <div class="campaign-actions">
+              <button class="btn-icon" title="Edit"></button>
+              <button class="btn-icon" title="Pause">⏸</button>
+            </div>
+          </div>
+
+          <div class="campaign-details">
+            <div class="detail-row">
+              <span class="label">Platform:</span>
+              <span class="value">Facebook Pixel</span>
+            </div>
+            <div class="detail-row">
+              <span class="label">Duration:</span>
+              <span class="value">Ongoing</span>
+            </div>
+            <div class="detail-row">
+              <span class="label">Daily Budget:</span>
+              <span class="value">$75.00</span>
+            </div>
+          </div>
+
+          <div class="campaign-metrics">
+            <div class="metric">
+              <span class="metric-label">Spend</span>
+              <span class="metric-value">$1,800.00</span>
+            </div>
+            <div class="metric">
+              <span class="metric-label">Revenue</span>
+              <span class="metric-value">$7,200.00</span>
+            </div>
+            <div class="metric">
+              <span class="metric-label">ROAS</span>
+              <span class="metric-value metric-success">4.0x</span>
+            </div>
+            <div class="metric">
+              <span class="metric-label">Conversions</span>
+              <span class="metric-value">89</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Campaign Card 4 - Paused -->
+        <div class="campaign-card campaign-paused">
+          <div class="campaign-header">
+            <div>
+              <h3>Summer Sale 2024</h3>
+              <span class="campaign-status status-paused">Paused</span>
+            </div>
+            <div class="campaign-actions">
+              <button class="btn-icon" title="Edit"></button>
+              <button class="btn-icon" title="Resume"></button>
+            </div>
+          </div>
+
+          <div class="campaign-details">
+            <div class="detail-row">
+              <span class="label">Platform:</span>
+              <span class="value">Instagram</span>
+            </div>
+            <div class="detail-row">
+              <span class="label">Duration:</span>
+              <span class="value">Jun 1 - Aug 31, 2024</span>
+            </div>
+            <div class="detail-row">
+              <span class="label">Daily Budget:</span>
+              <span class="value">$100.00</span>
+            </div>
+          </div>
+
+          <div class="campaign-metrics">
+            <div class="metric">
+              <span class="metric-label">Spend</span>
+              <span class="metric-value">$3,600.00</span>
+            </div>
+            <div class="metric">
+              <span class="metric-label">Revenue</span>
+              <span class="metric-value">$12,800.00</span>
+            </div>
+            <div class="metric">
+              <span class="metric-label">ROAS</span>
+              <span class="metric-value metric-success">3.56x</span>
+            </div>
+            <div class="metric">
+              <span class="metric-label">Conversions</span>
+              <span class="metric-value">168</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Platform Performance -->
+      <div class="section-header">
+        <h2>Performance by Platform</h2>
+      </div>
+
+      <div class="platform-stats">
+        <div class="platform-card">
+          <div class="platform-header">
+            <div class="platform-icon"></div>
+            <h3>Facebook & Instagram</h3>
+          </div>
+          <div class="platform-metrics">
+            <div class="metric-row">
+              <span>Total Spend:</span>
+              <strong>$4,650.00</strong>
+            </div>
+            <div class="metric-row">
+              <span>Revenue:</span>
+              <strong>$18,600.00</strong>
+            </div>
+            <div class="metric-row">
+              <span>ROAS:</span>
+              <strong class="metric-success">4.0x</strong>
+            </div>
+          </div>
+        </div>
+
+        <div class="platform-card">
+          <div class="platform-header">
+            <div class="platform-icon"></div>
+            <h3>Google Ads</h3>
+          </div>
+          <div class="platform-metrics">
+            <div class="metric-row">
+              <span>Total Spend:</span>
+              <strong>$4,200.00</strong>
+            </div>
+            <div class="metric-row">
+              <span>Revenue:</span>
+              <strong>$16,800.00</strong>
+            </div>
+            <div class="metric-row">
+              <span>ROAS:</span>
+              <strong class="metric-success">4.0x</strong>
+            </div>
+          </div>
+        </div>
+
+        <div class="platform-card">
+          <div class="platform-header">
+            <div class="platform-icon"></div>
+            <h3>TikTok Ads</h3>
+          </div>
+          <div class="platform-metrics">
+            <div class="metric-row">
+              <span>Total Spend:</span>
+              <strong>$3,600.00</strong>
+            </div>
+            <div class="metric-row">
+              <span>Revenue:</span>
+              <strong>$12,800.00</strong>
+            </div>
+            <div class="metric-row">
+              <span>ROAS:</span>
+              <strong class="metric-success">3.56x</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <p>&copy; 2024 Shopify Analytics SaaS. Built with Express & MongoDB.</p>
+    </div>
+  </footer>
+
+  <!-- Create Campaign Modal (Hidden by default) -->
+  <div id="createCampaignModal" class="modal" style="display: none;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Create New Campaign</h2>
+        <button class="modal-close" onclick="hideCreateCampaignModal()">&times;</button>
+      </div>
+      <form class="campaign-form">
+        <div class="form-group">
+          <label for="campaignName">Campaign Name</label>
+          <input type="text" id="campaignName" placeholder="e.g., Spring Sale 2025" required>
+        </div>
+
+        <div class="form-group">
+          <label for="platform">Platform</label>
+          <select id="platform" required>
+            <option value="">Select Platform</option>
+            <option value="facebook">Facebook & Instagram</option>
+            <option value="google">Google Ads</option>
+            <option value="tiktok">TikTok Ads</option>
+            <option value="pinterest">Pinterest Ads</option>
+          </select>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="startDate">Start Date</label>
+            <input type="date" id="startDate" required>
+          </div>
+          <div class="form-group">
+            <label for="endDate">End Date</label>
+            <input type="date" id="endDate" required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="dailyBudget">Daily Budget ($)</label>
+          <input type="number" id="dailyBudget" placeholder="0.00" step="0.01" required>
+        </div>
+
+        <div class="form-group">
+          <label for="targetStore">Target Store</label>
+          <select id="targetStore" required>
+            <option value="">Select Store</option>
+            <% stores.forEach(store => { %>
+              <option value="<%= store._id %>"><%= store.storeName %></option>
+            <% }); %>
+          </select>
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" class="btn-secondary" onclick="hideCreateCampaignModal()">Cancel</button>
+          <button type="submit" class="btn-primary">Create Campaign</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="/js/main.js"></script>
+  <script>
+    function showCreateCampaignModal() {
+      document.getElementById('createCampaignModal').style.display = 'flex';
+    }
+
+    function hideCreateCampaignModal() {
+      document.getElementById('createCampaignModal').style.display = 'none';
+    }
+
+    // Close modal when clicking outside
+    window.onclick = function(event) {
+      const modal = document.getElementById('createCampaignModal');
+      if (event.target === modal) {
+        hideCreateCampaignModal();
+      }
+    }
+  </script>
+</body>
+</html>

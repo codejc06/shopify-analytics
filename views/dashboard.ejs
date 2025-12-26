@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <nav class="navbar">
+    <div class="container">
+      <div class="nav-brand">
+        <h1>Shopify Analytics</h1>
+      </div>
+      <ul class="nav-menu">
+        <li><a href="/dashboard" class="nav-link active">Dashboard</a></li>
+        <li><a href="/dashboard/ads" class="nav-link">Ads</a></li>
+        <li><a href="/dashboard/add" class="nav-link btn-primary">+ Add Store</a></li>
+        <li><span class="nav-user"> <%= user.name %></span></li>
+        <li><a href="/auth/logout" class="nav-link">Logout</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <main class="main-content">
+    <div class="container">
+      <div class="page-header">
+        <h2>My Stores</h2>
+        <p class="subtitle">Welcome back, <%= user.name %>! Here are your connected Shopify stores</p>
+      </div>
+
+      <% if (success && success.length > 0) { %>
+        <div class="alert alert-success">
+          <%= success %>
+        </div>
+      <% } %>
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          
+          <div class="stat-info">
+            <h3><%= stores.length %></h3>
+            <p>My Stores</p>
+          </div>
+        </div>
+        <div class="stat-card">
+          
+          <div class="stat-info">
+            <h3>$<%= stores.reduce((sum, s) => sum + parseFloat(s.totalRevenue || 0), 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) %></h3>
+            <p>Total Revenue</p>
+          </div>
+        </div>
+        <div class="stat-card">
+          
+          <div class="stat-info">
+            <h3><%= stores.reduce((sum, s) => sum + (s.orderCount || 0), 0) %></h3>
+            <p>Total Orders</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="stores-section">
+        <h3>Stores Overview</h3>
+
+        <% if (stores.length === 0) { %>
+          <div class="empty-state">
+            <p>No stores connected yet.</p>
+            <a href="/dashboard/add" class="btn btn-primary">Add Your First Store</a>
+          </div>
+        <% } else { %>
+          <div class="stores-grid">
+            <% stores.forEach(store => { %>
+              <div class="store-card">
+                <div class="store-header">
+                  <h4><%= store.storeName %></h4>
+                  <span class="store-badge">Active</span>
+                </div>
+                <div class="store-details">
+                  <p class="store-domain">
+                    <span class="label">Domain:</span>
+                    <span class="value"><%= store.shopifyDomain %></span>
+                  </p>
+                  <p class="store-owner">
+                    <span class="label">Owner:</span>
+                    <span class="value"><%= store.user.name %></span>
+                  </p>
+                  <p class="store-sync">
+                    <span class="label">Last Sync:</span>
+                    <span class="value"><%= new Date(store.lastSync).toLocaleDateString() %></span>
+                  </p>
+                </div>
+                <div class="store-stats">
+                  <div class="stat">
+                    <span class="stat-value"><%= store.orderCount %></span>
+                    <span class="stat-label">Orders</span>
+                  </div>
+                  <div class="stat">
+                    <span class="stat-value">$<%= parseFloat(store.totalRevenue).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) %></span>
+                    <span class="stat-label">Revenue</span>
+                  </div>
+                </div>
+                <div class="store-actions">
+                  <a href="/dashboard/<%= store._id %>" class="btn btn-secondary">View Analytics</a>
+                  <button onclick="deleteStore('<%= store._id %>', '<%= store.storeName %>')" class="btn btn-danger-outline">Delete</button>
+                </div>
+              </div>
+            <% }) %>
+          </div>
+        <% } %>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <p>&copy; 2024 Shopify Analytics SaaS. Built with Express & MongoDB.</p>
+    </div>
+  </footer>
+
+  <script src="/js/main.js"></script>
+  <script>
+    async function deleteStore(storeId, storeName) {
+      if (!confirm(`Are you sure you want to delete "${storeName}"?\n\nThis will permanently delete all orders, reports, and analytics data for this store.`)) {
+        return;
+      }
+
+      try {
+        const response = await fetch(`/dashboard/${storeId}`, {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          alert('Store deleted successfully!');
+          window.location.reload();
+        } else {
+          alert('Error: ' + (data.error || 'Failed to delete store'));
+        }
+      } catch (error) {
+        console.error('Delete error:', error);
+        alert('Error deleting store. Please try again.');
+      }
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <nav class="navbar">
+    <div class="container">
+      <div class="nav-brand">
+        <h1> Shopify Analytics</h1>
+      </div>
+      <ul class="nav-menu">
+        <li><a href="/dashboard" class="nav-link">Dashboard</a></li>
+        <li><a href="/dashboard/ads" class="nav-link">Ads</a></li>
+        <li><a href="/dashboard/add" class="nav-link btn-primary active">+ Add Store</a></li>
+        <li><span class="nav-user"> <%= user.name %></span></li>
+        <li><a href="/auth/logout" class="nav-link">Logout</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <main class="main-content">
+    <div class="container">
+      <div class="breadcrumb">
+        <a href="/dashboard">Dashboard</a> / <span>Add Store</span>
+      </div>
+
+      <div class="page-header">
+        <h2>Add New Shopify Store</h2>
+        <p class="subtitle">Connect a new Shopify store to start tracking analytics</p>
+      </div>
+
+      <!-- Shopify OAuth Connect -->
+      <div class="oauth-section">
+        <div class="oauth-card">
+          <div class="oauth-header">
+            <div class="shopify-logo"></div>
+            <h3>Connect with Shopify</h3>
+            <p>Securely connect your Shopify store with one click using OAuth</p>
+          </div>
+
+          <form action="/auth/shopify" method="GET" class="oauth-form" id="shopifyConnectForm">
+            <div class="form-group">
+              <label for="shop">Your Shopify Store URL</label>
+              <div class="input-with-suffix">
+                <input
+                  type="text"
+                  name="shop"
+                  id="shop"
+                  placeholder="my-store"
+                  required
+                  pattern="[a-zA-Z0-9\-]+"
+                  title="Enter your store name (without .myshopify.com)"
+                >
+                <span class="input-suffix">.myshopify.com</span>
+              </div>
+              <small>Enter your store name only (e.g., "my-store" for my-store.myshopify.com)</small>
+            </div>
+
+            <button type="submit" class="btn btn-shopify">
+              <span></span> Connect with Shopify
+            </button>
+          </form>
+
+          <div class="oauth-features">
+            <div class="feature"> Automatic data sync</div>
+            <div class="feature"> 12 months of historical data</div>
+            <div class="feature"> Read-only access (safe & secure)</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="divider">
+        <span>OR</span>
+      </div>
+
+      <div class="form-container">
+        <h3 class="manual-title">Manual Connection</h3>
+        <p class="manual-subtitle">Connect manually if you already have an access token</p>
+
+        <form action="/dashboard/add" method="POST" class="add-store-form" id="addStoreForm">
+          <div class="form-group">
+            <label for="storeName">Store Name</label>
+            <input
+              type="text"
+              name="storeName"
+              id="storeName"
+              placeholder="e.g., My Fashion Store"
+              required
+            >
+          </div>
+
+          <div class="form-group">
+            <label for="shopifyDomain">Shopify Domain</label>
+            <input
+              type="text"
+              name="shopifyDomain"
+              id="shopifyDomain"
+              placeholder="e.g., my-store.myshopify.com"
+              required
+            >
+            <small>Enter your store's .myshopify.com domain</small>
+          </div>
+
+          <div class="form-group">
+            <label for="accessToken">Access Token (Optional)</label>
+            <input
+              type="text"
+              name="accessToken"
+              id="accessToken"
+              placeholder="shpat_xxxxxxxxxxxxx"
+            >
+            <small>Shopify API access token for real-time sync</small>
+          </div>
+
+          <div class="form-actions">
+            <a href="/dashboard" class="btn btn-secondary">Cancel</a>
+            <button type="submit" class="btn btn-primary">Add Store</button>
+          </div>
+        </form>
+      </div>
+
+      <div class="help-section">
+        <h3>How It Works</h3>
+        <div class="help-cards">
+          <div class="help-card">
+            <h4>1. Connect Your Store</h4>
+            <p>Enter your Shopify store name and click "Connect with Shopify" to securely authenticate via OAuth</p>
+          </div>
+          <div class="help-card">
+            <h4>2. Grant Permissions</h4>
+            <p>Shopify will ask you to grant read-only access to orders, products, and customer data</p>
+          </div>
+          <div class="help-card">
+            <h4>3. View Analytics</h4>
+            <p>We'll automatically sync 12 months of data and generate comprehensive analytics reports</p>
+          </div>
+        </div>
+
+        <div class="security-note">
+          <strong> Security & Privacy:</strong> We only request read-only permissions. We cannot modify your store data, and your information is encrypted and secured.
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <p>&copy; 2024 Shopify Analytics SaaS. Built with Express & MongoDB.</p>
+    </div>
+  </footer>
+
+  <script src="/js/main.js"></script>
+</body>
+</html>
