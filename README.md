@@ -341,7 +341,7 @@ SESSION_SECRET=strong_random_secret
 
 ---
 
-# 🤖 AI Insights System
+# AI Insights System
 
 ## Overview
 
@@ -369,10 +369,10 @@ npm run dev
 ## Current Status: MOCK MODE
 
 The AI system is **fully installed and working** in mock mode:
-- ✅ All API endpoints functional
-- ✅ Full pipeline working
-- ✅ Zero costs (mock responses)
-- ✅ Perfect for testing
+- All API endpoints functional
+- Full pipeline working
+- Zero costs (mock responses)
+- Perfect for testing
 
 **API Key in .env:**
 ```env
@@ -651,7 +651,7 @@ console.log(rateLimiter.getStats());
 
 ## Best Practices
 
-### DO ✅
+### DO
 - Test in mock mode first
 - Use for monthly/weekly insights
 - Cache aggressively
@@ -659,7 +659,7 @@ console.log(rateLimiter.getStats());
 - Collect user feedback
 - Start with manual generation
 
-### DON'T ❌
+### DON'T
 - Enable auto-generation immediately
 - Generate on every page load
 - Trust AI numbers over your analytics
@@ -670,12 +670,12 @@ console.log(rateLimiter.getStats());
 ## Future Enhancements
 
 Already architected for:
-- ✅ Model swapping (OpenAI → Anthropic)
-- ✅ Fine-tuning with feedback
-- ✅ Industry-specific prompts
-- ✅ Multi-month context
-- ✅ A/B testing prompts
-- ✅ Report versioning
+- Model swapping (OpenAI to Anthropic)
+- Fine-tuning with feedback
+- Industry-specific prompts
+- Multi-month context
+- A/B testing prompts
+- Report versioning
 
 ## NPM Scripts
 
