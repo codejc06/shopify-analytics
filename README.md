@@ -7,9 +7,7 @@ A full-stack analytics platform for Shopify merchants that provides actionable i
 ### Root-Cause Analysis Engine
 - **Deterministic logic** that explains WHY revenue changed month-over-month
 - Analyzes 6 key metrics: Revenue, Orders, AOV, Returning Customers, Conversion Rate, Shipping Time
-- Plain-English explanations with impact prioritization (High/Medium/Low)
-- No ML/AI - 100% transparent and explainable
-
+  
 ### Smart Alerts System
 - Proactive notifications for critical business metrics
 - Severity-based prioritization
