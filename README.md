@@ -1,4 +1,4 @@
-# Shopify Analytics SaaS
+# Shopify Analytics 
 
 A full-stack analytics platform for Shopify merchants that provides actionable insights, root-cause analysis, and smart recommendations.
 
